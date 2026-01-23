@@ -8,9 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountReplenishmentForm {
+    private static String baseUrl = "https://www.mts.by/";
     private final WebDriver driver;
     private final WebDriverWait wait;
-    private final By iFrame = By.xpath("//iframe[@class='bepaid-iframe']");
+    private final By iFrame = By.xpath("//iframe[@class='payment-widget-iframe']");
     private final By link = By.xpath("//a[text()='Подробнее о сервисе']");
     final String newLink = "https://www.mts.by/help/poryadok-oplaty-i-bezopasnost-internet-platezhey/";
 
@@ -115,6 +116,10 @@ public class AccountReplenishmentForm {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     }
 
+    public static String getBaseUrl() {
+        return baseUrl;
+    }
+
     public String getTitleText(List<By> list, int x) {
         WebElement titleName = wait.until(ExpectedConditions.visibilityOfElementLocated(list.get(x)));
 
@@ -134,7 +139,7 @@ public class AccountReplenishmentForm {
         return driver.getCurrentUrl();
     }
 
-    public void continueButtonClick() {
+    public void continueButtonFillAndClick() {
         WebElement phoneNumberField = wait.until(ExpectedConditions.visibilityOfElementLocated(phoneNumberFieldList.get(0)));
         WebElement sumField = wait.until(ExpectedConditions.visibilityOfElementLocated(sumFieldList.get(0)));
         WebElement continueButton = wait.until(ExpectedConditions.visibilityOfElementLocated(continueButtonList.get(0)));
@@ -146,8 +151,6 @@ public class AccountReplenishmentForm {
         sumField.sendKeys(phoneAndSum[1]);
 
         continueButton.click();
-
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
         WebElement iframe = wait.until(ExpectedConditions.visibilityOfElementLocated(iFrame));
 

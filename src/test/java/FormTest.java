@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -17,7 +19,7 @@ public class FormTest {
 
         driver = new ChromeDriver();
 
-        driver.get("https://www.mts.by/");
+        driver.get(AccountReplenishmentForm.getBaseUrl());
 
         WebElement cookie = new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@class='btn btn_black cookie__ok']")));
 
@@ -31,7 +33,7 @@ public class FormTest {
 
     @BeforeEach
     public void precondition() {
-        driver.get("https://www.mts.by/");
+        driver.get(AccountReplenishmentForm.getBaseUrl());
     }
 
     @DisplayName("Проверка названия формы")
@@ -43,15 +45,18 @@ public class FormTest {
     }
 
     @DisplayName("Проверка логотипов платежных систем")
-    @Test
-    public void logoTest() {
+    @ParameterizedTest
+    @CsvSource({
+            "0, 0",
+            "1, 1",
+            "2, 2",
+            "3, 3",
+            "4, 4"
+    })
+    public void logoTest(int imagesIndex, int imagesListIndex) {
         AccountReplenishmentForm image = new AccountReplenishmentForm(driver);
 
-        Assertions.assertEquals(image.images[0], image.getImageInfo(image.imagesList, 0));
-        Assertions.assertEquals(image.images[1], image.getImageInfo(image.imagesList, 1));
-        Assertions.assertEquals(image.images[2], image.getImageInfo(image.imagesList, 2));
-        Assertions.assertEquals(image.images[3], image.getImageInfo(image.imagesList, 3));
-        Assertions.assertEquals(image.images[4], image.getImageInfo(image.imagesList, 4));
+        Assertions.assertEquals(image.images[imagesIndex], image.getImageInfo(image.imagesList, imagesListIndex));
     }
 
     @DisplayName("Работоспособность ссылки \"Подробнее о сервисе\"")
@@ -67,7 +72,7 @@ public class FormTest {
     public void buttonTest() {
         AccountReplenishmentForm form = new AccountReplenishmentForm(driver);
 
-        form.continueButtonClick();
+        form.continueButtonFillAndClick();
 
         WebElement secondForm = new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='app-wrapper__content ng-tns-c4113268976-0']")));
 
